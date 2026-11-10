@@ -7,15 +7,13 @@ import { COOKIE_SESION, verificarSesion } from "@/lib/sesion";
  */
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
-  if (pathname === "/panel/ingresar") return NextResponse.next();
-
   const sesion = await verificarSesion(request.cookies.get(COOKIE_SESION)?.value);
   if (sesion) return NextResponse.next();
 
   if (pathname.startsWith("/api/")) {
     return NextResponse.json({ mensaje: "Debes iniciar sesión" }, { status: 401 });
   }
-  const destino = new URL("/panel/ingresar", request.url);
+  const destino = new URL("/ingresar", request.url);
   destino.searchParams.set("siguiente", pathname + search);
   return NextResponse.redirect(destino);
 }

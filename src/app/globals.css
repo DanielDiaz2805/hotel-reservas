@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Le indica a Tailwind de forma explícita dónde buscar las clases.
+   Evita que se pierdan estilos en carpetas con nombres especiales en Windows. */
+@source "../";
+
 /* Paleta del Hotel Brisas del Sinú: el verde del río y el amarillo del sol de la tarde */
 @theme {
   --color-papel: #f4f6f2;
@@ -12,6 +16,69 @@
 
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+
+  /* Animaciones: animate-subir, animate-aparecer, animate-dibujar, animate-flotar */
+  --animate-subir: subir 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-aparecer: aparecer 0.6s ease-out both;
+  --animate-dibujar: dibujar 2.2s cubic-bezier(0.65, 0, 0.35, 1) both;
+  --animate-escala: escala 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  --animate-flotar: flotar 6s ease-in-out infinite;
+  --animate-latido: latido 2.4s ease-out infinite;
+
+  @keyframes subir {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes dibujar {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes escala {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes latido {
+    0% {
+      box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.55);
+    }
+    70%,
+    100% {
+      box-shadow: 0 0 0 14px rgba(37, 211, 102, 0);
+    }
+  }
+  @keyframes flotar {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
 }
 
 html {
@@ -29,8 +96,39 @@ body {
   outline-offset: 3px;
 }
 
+/* Elementos que aparecen al entrar en pantalla (componente <Revelar>) */
+[data-revelar] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--retraso, 0ms);
+}
+[data-revelar="visible"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Para trazos que se dibujan: pathLength="1" en el SVG */
+.trazo-animado {
+  stroke-dasharray: 1;
+}
+
+/* Quien prefiere menos movimiento ve todo de inmediato, sin animaciones */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  [data-revelar] {
+    opacity: 1;
+    transform: none;
   }
 }

@@ -5,6 +5,7 @@ import { busquedaSchema, erroresPorCampo } from "@/lib/validacion";
 import { hoyEnColombia, fechaLegible } from "@/lib/fechas";
 import { TarjetaHabitacion } from "@/components/TarjetaHabitacion";
 import { BuscadorFechas } from "@/components/BuscadorFechas";
+import { Revelar } from "@/components/Revelar";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +42,10 @@ export default async function Inicio({ searchParams }: Props) {
             </p>
           ) : (
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {disponibles.map((h) => (
-                <TarjetaHabitacion key={h.id} habitacion={h} estadia={{ noches: h.noches, total: h.total, consulta }} />
+              {disponibles.map((h, i) => (
+                <Revelar key={h.id} retraso={(i % 3) * 110} className="h-full">
+                  <TarjetaHabitacion habitacion={h} estadia={{ noches: h.noches, total: h.total, consulta }} />
+                </Revelar>
               ))}
             </div>
           )}
@@ -61,8 +64,10 @@ export default async function Inicio({ searchParams }: Props) {
             </p>
           ) : (
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {habitaciones.map((h) => (
-                <TarjetaHabitacion key={h.id} habitacion={h} />
+              {habitaciones.map((h, i) => (
+                <Revelar key={h.id} retraso={(i % 3) * 110} className="h-full">
+                  <TarjetaHabitacion habitacion={h} />
+                </Revelar>
               ))}
             </div>
           )}
@@ -88,16 +93,28 @@ export default async function Inicio({ searchParams }: Props) {
   return (
     <main>
       <section className="relative overflow-hidden bg-rio-oscuro pb-28 pt-36 text-white sm:pb-36 sm:pt-44">
+        {/* Luces suaves que flotan detrás del texto */}
+        <div aria-hidden className="absolute -right-24 top-10 h-96 w-96 rounded-full bg-sol/15 blur-3xl animate-flotar" />
+        <div
+          aria-hidden
+          className="absolute -left-32 bottom-0 h-96 w-96 rounded-full bg-rio/50 blur-3xl animate-flotar"
+          style={{ animationDelay: "-3s" }}
+        />
         <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
-          <p className="text-sm font-medium text-sol">Montería, Córdoba</p>
-          <h1 className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
+          <p className="text-sm font-medium text-sol animate-subir">Montería, Córdoba</p>
+          <h1
+            className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-tight animate-subir sm:text-7xl"
+            style={{ animationDelay: "100ms" }}
+          >
             Descansa a pocas cuadras del río Sinú
           </h1>
-          <p className="mt-6 max-w-xl text-lg text-white/80">
+          <p className="mt-6 max-w-xl text-lg text-white/80 animate-subir" style={{ animationDelay: "200ms" }}>
             Elige tus fechas, mira qué habitaciones están libres y confirma tu reserva por WhatsApp, sin esperas ni
             llamadas.
           </p>
-          <BuscadorFechas key={`${inicial.llegada}-${inicial.salida}`} hoy={hoy} inicial={inicial} />
+          <div className="animate-subir" style={{ animationDelay: "320ms" }}>
+            <BuscadorFechas key={`${inicial.llegada}-${inicial.salida}`} hoy={hoy} inicial={inicial} />
+          </div>
           {erroresBusqueda.length > 0 && (
             <p role="alert" className="mt-3 text-sm text-sol">
               {erroresBusqueda.join(". ")}.
@@ -112,14 +129,24 @@ export default async function Inicio({ searchParams }: Props) {
           preserveAspectRatio="none"
         >
           <path d="M0 70 C 240 20, 480 110, 720 64 S 1200 20, 1440 60 L1440 120 L0 120 Z" className="fill-papel" />
-          <path d="M0 52 C 240 2, 480 92, 720 46 S 1200 2, 1440 42" fill="none" className="stroke-sol/70" strokeWidth="2" />
+          {/* La línea del río se dibuja al cargar la página */}
+          <path
+            d="M0 52 C 240 2, 480 92, 720 46 S 1200 2, 1440 42"
+            pathLength={1}
+            fill="none"
+            className="stroke-sol/80 trazo-animado animate-dibujar"
+            strokeWidth="2"
+            style={{ animationDelay: "400ms" }}
+          />
         </svg>
       </section>
 
       <section id="habitaciones" className="mx-auto max-w-6xl scroll-mt-8 px-5 py-20 sm:px-8">
-        <h2 className="font-display text-3xl font-semibold sm:text-4xl">
-          {busqueda?.success ? "Disponibles para tus fechas" : "Nuestras habitaciones"}
-        </h2>
+        <Revelar>
+          <h2 className="font-display text-3xl font-semibold sm:text-4xl">
+            {busqueda?.success ? "Disponibles para tus fechas" : "Nuestras habitaciones"}
+          </h2>
+        </Revelar>
         {contenido}
       </section>
     </main>

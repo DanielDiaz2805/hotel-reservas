@@ -31,7 +31,8 @@ export function FormularioIngreso({ siguiente }: { siguiente: string }) {
     setEnviando(false);
   }
 
-  const campo = "mt-1 w-full rounded-xl border border-linea bg-white px-3 py-2.5 focus:border-rio focus:outline-none";
+  const campo =
+    "mt-1.5 w-full rounded-xl border border-linea bg-white px-4 py-3 transition-shadow focus:border-rio focus:shadow-[0_0_0_4px_rgba(30,107,90,0.12)] focus:outline-none";
   return (
     <form onSubmit={ingresar} className="mt-8 space-y-4">
       <label className="block text-sm font-medium">
@@ -43,14 +44,14 @@ export function FormularioIngreso({ siguiente }: { siguiente: string }) {
         <input name="password" type="password" autoComplete="current-password" required className={campo} />
       </label>
       {error && (
-        <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800">
+        <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-800 animate-subir">
           {error}
         </p>
       )}
       <button
         type="submit"
         disabled={enviando}
-        className="w-full rounded-full bg-rio px-6 py-3 font-semibold text-white hover:bg-rio-oscuro disabled:opacity-60"
+        className="w-full rounded-full bg-rio px-6 py-3.5 font-semibold text-white shadow-[0_10px_30px_-12px_rgba(30,107,90,0.8)] transition-all hover:-translate-y-0.5 hover:bg-rio-oscuro active:translate-y-0 disabled:opacity-60"
       >
         {enviando ? "Ingresando…" : "Ingresar"}
       </button>

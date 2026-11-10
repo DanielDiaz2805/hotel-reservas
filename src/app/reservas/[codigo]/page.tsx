@@ -40,7 +40,7 @@ export default async function EstadoReserva({ params }: { params: Promise<{ codi
   return (
     <main>
       <div className="bg-rio-oscuro pb-10 pt-24" />
-      <div className="mx-auto max-w-xl px-5 py-12 sm:px-8">
+      <div className="mx-auto max-w-xl px-5 py-12 animate-subir sm:px-8">
         <p className="text-sm text-niebla">Reserva a nombre de {r.nombre.split(" ")[0]}</p>
         <h1 className="mt-1 font-display text-4xl font-semibold tracking-wide">{r.codigo}</h1>
         <p className={`mt-4 inline-flex rounded-full px-3 py-1 text-sm font-semibold ${estado.estilo}`}>{estado.texto}</p>

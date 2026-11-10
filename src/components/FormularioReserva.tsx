@@ -108,8 +108,21 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
 
   if (confirmacion) {
     return (
-      <div role="status" className="rounded-2xl border border-rio/30 bg-white p-6">
-        <p className="text-sm font-medium text-rio">Solicitud de reserva recibida</p>
+      <div role="status" className="rounded-3xl border border-rio/30 bg-white p-6 shadow-[0_24px_60px_-30px_rgba(13,58,49,0.5)] animate-escala">
+        {/* Círculo y check que se dibujan: el momento de celebración */}
+        <svg viewBox="0 0 52 52" className="h-14 w-14" aria-hidden>
+          <circle cx="26" cy="26" r="24" fill="none" strokeWidth="3" pathLength={1} className="stroke-rio trazo-animado animate-dibujar [animation-duration:0.8s]" />
+          <path
+            d="M15 27 l7 7 l15 -16"
+            fill="none"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            pathLength={1}
+            className="stroke-rio trazo-animado animate-dibujar [animation-duration:0.5s] [animation-delay:0.6s]"
+          />
+        </svg>
+        <p className="mt-4 text-sm font-medium text-rio">Solicitud de reserva recibida</p>
         <p className="mt-2 font-display text-3xl font-semibold tracking-wide">{confirmacion.codigo}</p>
         <p className="mt-1 text-sm text-niebla">Guarda este código: lo necesitarás para cualquier consulta.</p>
         <dl className="mt-6 grid grid-cols-2 gap-y-3 text-[0.95rem]">
@@ -138,7 +151,7 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#0b3d22] transition-colors hover:bg-[#1ebe5a]"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3.5 font-semibold text-[#0b3d22] shadow-[0_10px_30px_-12px_rgba(37,211,102,0.9)] transition-all hover:-translate-y-0.5 hover:bg-[#1ebe5a] animate-subir [animation-delay:0.9s]"
           >
             <IconoWhatsApp />
             Enviar reserva por WhatsApp
@@ -168,7 +181,7 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
   });
 
   return (
-    <form onSubmit={enviar} noValidate className="rounded-2xl border border-linea bg-white p-6">
+    <form onSubmit={enviar} noValidate className="rounded-3xl border border-linea bg-white p-6 shadow-[0_20px_50px_-35px_rgba(13,58,49,0.5)]">
       <p>
         <span className="font-display text-3xl font-semibold">{formatearPrecio(habitacion.precioNoche)}</span>
         <span className="text-niebla"> por noche</span>
@@ -206,12 +219,13 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
       <p aria-live="polite" className="mt-3 min-h-6 text-sm">
         {disponibilidad === "consultando" && <span className="text-niebla">Consultando disponibilidad…</span>}
         {disponibilidad === "disponible" && (
-          <span className="font-medium text-rio">
+          <span className="inline-flex items-center gap-1.5 font-medium text-rio animate-aparecer">
+            <span className="h-2 w-2 rounded-full bg-rio" />
             Disponible: {noches} {noches === 1 ? "noche" : "noches"} por {formatearPrecio(noches * habitacion.precioNoche)}
           </span>
         )}
         {disponibilidad === "ocupada" && (
-          <span className="font-medium text-red-700">No está disponible en esas fechas. Prueba con otras.</span>
+          <span className="font-medium text-red-700 animate-aparecer">No está disponible en esas fechas. Prueba con otras.</span>
         )}
       </p>
 
@@ -267,7 +281,7 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
       <button
         type="submit"
         disabled={enviando || disponibilidad === "ocupada" || !fechasCompletas}
-        className="mt-6 w-full rounded-full bg-rio px-6 py-3 font-semibold text-white transition-colors hover:bg-rio-oscuro disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-6 w-full rounded-full bg-rio px-6 py-3.5 font-semibold text-white shadow-[0_10px_30px_-12px_rgba(30,107,90,0.8)] transition-all hover:-translate-y-0.5 hover:bg-rio-oscuro active:translate-y-0 disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
       >
         {enviando ? "Enviando…" : "Solicitar reserva"}
       </button>

@@ -5,7 +5,7 @@ export function BotonSalir() {
   const router = useRouter();
   async function salir() {
     await fetch("/api/auth/salir", { method: "POST" });
-    router.replace("/panel/ingresar");
+    router.replace("/ingresar");
     router.refresh();
   }
   return (

@@ -1,6 +1,15 @@
 import Link from "next/link";
-import { contarPorEstado, esEstado, listarReservas, telefonoLegible, type EstadoReserva } from "@/lib/panel";
-import { fechaLegible } from "@/lib/fechas";
+import {
+  contarPorEstado,
+  esEstado,
+  listarReservas,
+  resumenDelDia,
+  telefonoLegible,
+  type EstadoReserva,
+  type ReservaAdmin,
+} from "@/lib/panel";
+import { fechaCompleta, fechaLegible, hoyEnColombia } from "@/lib/fechas";
+import { AccionesReserva } from "@/components/panel/AccionesReserva";
 import { formatearPrecio } from "@/lib/formato";
 
 export const dynamic = "force-dynamic";
@@ -23,11 +32,40 @@ export default async function Panel({ searchParams }: Props) {
   const { estado: parametro } = await searchParams;
   // Por defecto se muestran las pendientes: son las que requieren acción
   const estado: EstadoReserva = esEstado(parametro) ? parametro : "pendiente";
-  const [reservas, conteo] = await Promise.all([listarReservas(estado), contarPorEstado()]);
+  const hoy = hoyEnColombia();
+  const [reservas, conteo, resumen] = await Promise.all([listarReservas(estado), contarPorEstado(), resumenDelDia(hoy)]);
+  const porcentaje = resumen.totalHabitaciones ? Math.round((resumen.ocupadasHoy / resumen.totalHabitaciones) * 100) : 0;
 
   return (
     <>
-      <h1 className="font-display text-3xl font-semibold">Reservas</h1>
+      <p className="text-sm text-niebla first-letter:uppercase">{fechaCompleta(hoy)}</p>
+      <h1 className="mt-1 font-display text-3xl font-semibold">Hoy en el hotel</h1>
+
+      <section aria-label="Resumen del día" className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-2xl bg-rio-oscuro p-5 text-white">
+          <p className="text-sm text-white/70">Ocupación esta noche</p>
+          <p className="mt-1 font-display text-3xl font-semibold">
+            {resumen.ocupadasHoy} <span className="text-lg font-normal text-white/60">de {resumen.totalHabitaciones}</span>
+          </p>
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/15" aria-hidden>
+            <div className="h-full rounded-full bg-sol" style={{ width: `${porcentaje}%` }} />
+          </div>
+        </div>
+        <ListaDelDia titulo="Llegadas hoy" reservas={resumen.llegadas} />
+        <ListaDelDia titulo="Salidas hoy" reservas={resumen.salidas} />
+        <Link
+          href="/panel?estado=pendiente"
+          className="rounded-2xl border border-linea bg-white p-5 transition-colors hover:border-sol"
+        >
+          <p className="text-sm text-niebla">Por confirmar</p>
+          <p className="mt-1 font-display text-3xl font-semibold">{resumen.pendientes}</p>
+          <p className="mt-2 text-sm text-niebla">
+            {resumen.pendientes === 0 ? "Todo al día" : "Responde pronto para no perder la reserva"}
+          </p>
+        </Link>
+      </section>
+
+      <h2 className="mt-12 font-display text-2xl font-semibold">Reservas</h2>
 
       <nav aria-label="Filtrar por estado" className="mt-6 flex flex-wrap gap-2">
         {pestanas.map((p) => (
@@ -50,7 +88,7 @@ export default async function Panel({ searchParams }: Props) {
         </p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-2xl border border-linea bg-white">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[1000px] text-left text-sm">
             <thead className="border-b border-linea text-niebla">
               <tr>
                 <th className="px-4 py-3 font-medium">Código</th>
@@ -59,12 +97,13 @@ export default async function Panel({ searchParams }: Props) {
                 <th className="px-4 py-3 font-medium">Fechas</th>
                 <th className="px-4 py-3 text-right font-medium">Total</th>
                 <th className="px-4 py-3 font-medium">Estado</th>
+                <th className="px-4 py-3 font-medium">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-linea">
               {reservas.map((r) => (
                 <tr key={r.id} className="align-top">
-                  <td className="px-4 py-3 font-mono font-semibold">{r.codigo}</td>
+                  <td className="whitespace-nowrap px-4 py-3 font-mono font-semibold">{r.codigo}</td>
                   <td className="px-4 py-3">
                     <p className="font-medium">{r.nombre}</p>
                     <p className="text-niebla">{telefonoLegible(r.telefono)}</p>
@@ -88,6 +127,9 @@ export default async function Panel({ searchParams }: Props) {
                       {r.estado[0].toUpperCase() + r.estado.slice(1)}
                     </span>
                   </td>
+                  <td className="px-4 py-3">
+                    <AccionesReserva reserva={r} />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -95,5 +137,25 @@ export default async function Panel({ searchParams }: Props) {
         </div>
       )}
     </>
+  );
+}
+
+function ListaDelDia({ titulo, reservas }: { titulo: string; reservas: ReservaAdmin[] }) {
+  return (
+    <div className="rounded-2xl border border-linea bg-white p-5">
+      <p className="text-sm text-niebla">{titulo}</p>
+      <p className="mt-1 font-display text-3xl font-semibold">{reservas.length}</p>
+      {reservas.length > 0 && (
+        <ul className="mt-2 space-y-0.5 text-sm">
+          {reservas.slice(0, 3).map((r) => (
+            <li key={r.id} className="truncate">
+              {r.nombre.split(" ")[0]}, {r.habitacion}
+              {r.estado === "pendiente" && <span className="text-[#7a5300]"> (pendiente)</span>}
+            </li>
+          ))}
+          {reservas.length > 3 && <li className="text-niebla">y {reservas.length - 3} más</li>}
+        </ul>
+      )}
+    </div>
   );
 }

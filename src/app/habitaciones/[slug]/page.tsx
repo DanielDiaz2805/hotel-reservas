@@ -38,16 +38,16 @@ export default async function DetalleHabitacion({ params, searchParams }: Props)
     <main>
       <div className="bg-rio-oscuro pb-10 pt-24" />
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8">
-        <Link href="/#habitaciones" className="text-sm font-medium text-rio hover:underline">
-          Todas las habitaciones
+        <Link href="/#habitaciones" className="group inline-flex items-center gap-1 text-sm font-medium text-rio animate-aparecer">
+          <span className="transition-transform group-hover:-translate-x-1">←</span> Todas las habitaciones
         </Link>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-linea">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-linea animate-subir lg:sticky lg:top-8">
             <VisualHabitacion nombre={h.nombre} tipo={h.tipo} capacidad={h.capacidad} imagen={h.imagenes[0]} prioridad />
           </div>
 
-          <div>
+          <div className="animate-subir" style={{ animationDelay: "120ms" }}>
             <h1 className="font-display text-4xl font-semibold tracking-tight sm:text-5xl">{h.nombre}</h1>
             <p className="mt-2 text-niebla">
               Hasta {personas(h.capacidad)}, {h.camas}

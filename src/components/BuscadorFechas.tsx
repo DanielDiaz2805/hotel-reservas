@@ -67,7 +67,7 @@ export function BuscadorFechas({ hoy, inicial }: Props) {
       </label>
       <button
         type="submit"
-        className="rounded-xl bg-sol px-6 py-3 font-semibold text-rio-oscuro transition-colors hover:bg-white"
+        className="rounded-xl bg-sol px-6 py-3 font-semibold text-rio-oscuro shadow-[0_10px_30px_-10px_rgba(242,177,52,0.8)] transition-all hover:-translate-y-0.5 hover:bg-white active:translate-y-0"
       >
         Ver disponibilidad
       </button>
