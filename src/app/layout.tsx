@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const whatsapp = numeroHotel();
   return (
-    <html lang="es">
+    <html lang="es" data-scroll-behavior="smooth">
       <body className={`${bricolage.variable} ${figtree.variable} antialiased`}>
         {/* El encabezado, el pie y el botón de WhatsApp son del sitio público; el panel tiene los suyos */}
         <SoloSitioPublico>

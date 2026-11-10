@@ -1,9 +1,21 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function FormularioIngreso({ siguiente }: { siguiente: string }) {
+type Demo = { email: string; password: string } | null;
+
+export function FormularioIngreso({ siguiente, demo }: { siguiente: string; demo: Demo }) {
   const router = useRouter();
+  const formulario = useRef<HTMLFormElement>(null);
+
+  // Llena el formulario con el usuario de demostración y lo envía
+  function usarDemo() {
+    const f = formulario.current;
+    if (!f || !demo) return;
+    (f.elements.namedItem("email") as HTMLInputElement).value = demo.email;
+    (f.elements.namedItem("password") as HTMLInputElement).value = demo.password;
+    f.requestSubmit();
+  }
   const [error, setError] = useState("");
   const [enviando, setEnviando] = useState(false);
 
@@ -34,7 +46,7 @@ export function FormularioIngreso({ siguiente }: { siguiente: string }) {
   const campo =
     "mt-1.5 w-full rounded-xl border border-linea bg-white px-4 py-3 transition-shadow focus:border-rio focus:shadow-[0_0_0_4px_rgba(30,107,90,0.12)] focus:outline-none";
   return (
-    <form onSubmit={ingresar} className="mt-8 space-y-4">
+    <form ref={formulario} onSubmit={ingresar} className="mt-8 space-y-4">
       <label className="block text-sm font-medium">
         Correo
         <input name="email" type="email" autoComplete="username" required className={campo} />
@@ -55,6 +67,21 @@ export function FormularioIngreso({ siguiente }: { siguiente: string }) {
       >
         {enviando ? "Ingresando…" : "Ingresar"}
       </button>
+
+      {demo && (
+        <div className="rounded-2xl border border-dashed border-rio/40 bg-rio/5 p-4 text-sm animate-subir [animation-delay:0.4s]">
+          <p className="font-medium text-rio-oscuro">¿Vienes a conocer el proyecto?</p>
+          <p className="mt-1 text-niebla">Entra con el usuario de demostración y explora el panel.</p>
+          <button
+            type="button"
+            onClick={usarDemo}
+            disabled={enviando}
+            className="mt-3 w-full rounded-full border border-rio bg-white px-4 py-2.5 font-semibold text-rio transition-all hover:-translate-y-0.5 hover:bg-rio hover:text-white"
+          >
+            Entrar como demostración
+          </button>
+        </div>
+      )}
     </form>
   );
 }

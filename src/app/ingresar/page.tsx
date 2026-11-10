@@ -14,6 +14,12 @@ export default async function Ingresar({ searchParams }: Props) {
   const destino = siguiente?.startsWith("/panel") && !siguiente.startsWith("//") ? siguiente : "/panel";
   if (await obtenerSesion()) redirect(destino);
 
+  // Acceso de demostración para reclutadores: solo aparece si está configurado
+  const demo =
+    process.env.DEMO_EMAIL && process.env.DEMO_PASSWORD
+      ? { email: process.env.DEMO_EMAIL, password: process.env.DEMO_PASSWORD }
+      : null;
+
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
       {/* Panel de marca */}
@@ -61,7 +67,7 @@ export default async function Ingresar({ searchParams }: Props) {
           <p className="font-display text-sm font-semibold text-rio lg:hidden">Brisas del Sinú</p>
           <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight">Panel del hotel</h1>
           <p className="mt-2 text-niebla">Ingresa para gestionar las reservas.</p>
-          <FormularioIngreso siguiente={destino} />
+          <FormularioIngreso siguiente={destino} demo={demo} />
           <Link href="/" className="mt-8 block text-center text-sm text-niebla hover:text-rio">
             ← Volver al sitio
           </Link>
