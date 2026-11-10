@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { obtenerHabitacionPorSlug } from "@/lib/habitaciones";
-import { formatearPrecio, personas } from "@/lib/formato";
+import { personas } from "@/lib/formato";
 import { VisualHabitacion } from "@/components/VisualHabitacion";
+import { FormularioReserva } from "@/components/FormularioReserva";
+import { esFechaValida, hoyEnColombia } from "@/lib/fechas";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -15,8 +20,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return h ? { title: h.nombre, description: h.descripcion } : { title: "Habitación no encontrada" };
 }
 
-export default async function DetalleHabitacion({ params }: Props) {
+export default async function DetalleHabitacion({ params, searchParams }: Props) {
   const { slug } = await params;
+  const consulta = await searchParams;
+  // Fechas que vienen de la búsqueda en la página de inicio (si las hay)
+  const fecha = (valor: unknown) => (typeof valor === "string" && esFechaValida(valor) ? valor : undefined);
+  const inicial = {
+    llegada: fecha(consulta.llegada),
+    salida: fecha(consulta.salida),
+    huespedes: Number(consulta.huespedes) || undefined,
+  };
   const h = await obtenerHabitacionPorSlug(slug);
   if (!h) notFound();
 
@@ -50,13 +63,12 @@ export default async function DetalleHabitacion({ params }: Props) {
               ))}
             </ul>
 
-            <div className="mt-10 rounded-2xl border border-linea bg-white p-6">
-              <p>
-                <span className="font-display text-3xl font-semibold">{formatearPrecio(h.precioNoche)}</span>
-                <span className="text-niebla"> por noche</span>
-              </p>
-              {/* En el paso 4 aquí irá el formulario de fechas y la verificación de disponibilidad */}
-              <p className="mt-3 text-sm text-niebla">Muy pronto podrás elegir tus fechas y reservar desde aquí.</p>
+            <div className="mt-10">
+              <FormularioReserva
+                habitacion={{ id: h.id, slug: h.slug, nombre: h.nombre, precioNoche: h.precioNoche, capacidad: h.capacidad }}
+                hoy={hoyEnColombia()}
+                inicial={inicial}
+              />
             </div>
           </div>
         </div>

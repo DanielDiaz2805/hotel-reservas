@@ -3,8 +3,13 @@ import type { HabitacionPublica } from "@/lib/habitaciones";
 import { formatearPrecio, personas } from "@/lib/formato";
 import { VisualHabitacion } from "./VisualHabitacion";
 
-export function TarjetaHabitacion({ habitacion }: { habitacion: HabitacionPublica }) {
+type Estadia = { noches: number; total: number; consulta: string };
+
+export function TarjetaHabitacion({ habitacion, estadia }: { habitacion: HabitacionPublica; estadia?: Estadia }) {
   const h = habitacion;
+  // Si el huésped ya buscó fechas, se llevan al detalle para no volver a escribirlas
+  const enlace = `/habitaciones/${h.slug}${estadia ? `?${estadia.consulta}` : ""}`;
+
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-2xl border border-linea bg-white transition-shadow hover:shadow-[0_12px_40px_-16px_rgba(13,58,49,0.35)]">
       <div className="relative aspect-[4/3] overflow-hidden">
@@ -13,8 +18,7 @@ export function TarjetaHabitacion({ habitacion }: { habitacion: HabitacionPublic
 
       <div className="flex flex-1 flex-col p-6">
         <h3 className="font-display text-xl font-semibold">
-          {/* El enlace cubre toda la tarjeta, pero solo el título es el texto del enlace */}
-          <Link href={`/habitaciones/${h.slug}`} className="after:absolute after:inset-0">
+          <Link href={enlace} className="after:absolute after:inset-0">
             {h.nombre}
           </Link>
         </h3>
@@ -23,10 +27,25 @@ export function TarjetaHabitacion({ habitacion }: { habitacion: HabitacionPublic
         </p>
         <p className="mt-3 line-clamp-2 text-[0.95rem] text-niebla">{h.descripcion}</p>
 
-        <p className="mt-auto pt-6">
-          <span className="font-display text-2xl font-semibold">{formatearPrecio(h.precioNoche)}</span>
-          <span className="text-sm text-niebla"> por noche</span>
-        </p>
+        <div className="mt-auto pt-6">
+          {estadia ? (
+            <>
+              <p>
+                <span className="font-display text-2xl font-semibold">{formatearPrecio(estadia.total)}</span>
+                <span className="text-sm text-niebla">
+                  {" "}
+                  por {estadia.noches} {estadia.noches === 1 ? "noche" : "noches"}
+                </span>
+              </p>
+              <p className="text-sm text-niebla">{formatearPrecio(h.precioNoche)} por noche</p>
+            </>
+          ) : (
+            <p>
+              <span className="font-display text-2xl font-semibold">{formatearPrecio(h.precioNoche)}</span>
+              <span className="text-sm text-niebla"> por noche</span>
+            </p>
+          )}
+        </div>
       </div>
     </article>
   );
