@@ -7,9 +7,12 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "crear-admin": "tsx scripts/crear-admin.ts"
   },
   "dependencies": {
+    "bcryptjs": "3.0.3",
+    "jose": "6.2.13",
     "mongoose": "^9.12.1",
     "next": "15.5.29",
     "react": "19.1.0",
