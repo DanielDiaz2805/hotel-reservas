@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
+import { numeroHotel } from "@/lib/whatsapp";
+import { BotonWhatsApp } from "@/components/BotonWhatsApp";
 
 const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"] });
 const figtree = Figtree({ variable: "--font-figtree", subsets: ["latin"] });
@@ -13,6 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const whatsapp = numeroHotel();
   return (
     <html lang="es">
       <body className={`${bricolage.variable} ${figtree.variable} antialiased`}>
@@ -31,6 +34,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </header>
 
         {children}
+
+        {whatsapp && <BotonWhatsApp numero={whatsapp} />}
 
         <footer className="border-t border-linea">
           <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-niebla sm:flex-row sm:justify-between sm:px-8">

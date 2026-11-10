@@ -2,11 +2,14 @@
 import { useEffect, useState } from "react";
 import { contarNoches, fechaLegible, sumarDias } from "@/lib/fechas";
 import { formatearPrecio } from "@/lib/formato";
+import { enlaceWhatsApp, mensajeNuevaReserva } from "@/lib/whatsapp";
+import { IconoWhatsApp } from "./IconoWhatsApp";
 
 type Props = {
   habitacion: { id: string; slug: string; nombre: string; precioNoche: number; capacidad: number };
   hoy: string;
   inicial: { llegada?: string; salida?: string; huespedes?: number };
+  whatsappHotel: string | null;
 };
 
 type Confirmacion = {
@@ -18,11 +21,12 @@ type Confirmacion = {
   total: number;
   huespedes: number;
   estado: string;
+  nombre: string;
 };
 
 type Disponibilidad = "desconocida" | "consultando" | "disponible" | "ocupada";
 
-export function FormularioReserva({ habitacion, hoy, inicial }: Props) {
+export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: Props) {
   const [llegada, setLlegada] = useState(inicial.llegada ?? "");
   const [salida, setSalida] = useState(inicial.salida ?? "");
   const [huespedes, setHuespedes] = useState(Math.min(inicial.huespedes ?? 1, habitacion.capacidad));
@@ -123,8 +127,29 @@ export function FormularioReserva({ habitacion, hoy, inicial }: Props) {
           </dd>
         </dl>
         <p className="mt-6 rounded-xl bg-papel p-4 text-sm">
-          Tu reserva está <strong>pendiente</strong>. El hotel la confirmará por WhatsApp.
+          Tu reserva está <strong>pendiente</strong>. Envíale los datos al hotel por WhatsApp para que la confirme.
         </p>
+
+        {whatsappHotel && (
+          <a
+            href={enlaceWhatsApp(
+              whatsappHotel,
+              mensajeNuevaReserva(confirmacion, `${window.location.origin}/reservas/${confirmacion.codigo}`)
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#0b3d22] transition-colors hover:bg-[#1ebe5a]"
+          >
+            <IconoWhatsApp />
+            Enviar reserva por WhatsApp
+          </a>
+        )}
+        <a
+          href={`/reservas/${confirmacion.codigo}`}
+          className="mt-3 block text-center text-sm font-medium text-rio underline underline-offset-4"
+        >
+          Ver el estado de mi reserva
+        </a>
       </div>
     );
   }

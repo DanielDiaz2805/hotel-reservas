@@ -6,6 +6,7 @@ import { personas } from "@/lib/formato";
 import { VisualHabitacion } from "@/components/VisualHabitacion";
 import { FormularioReserva } from "@/components/FormularioReserva";
 import { esFechaValida, hoyEnColombia } from "@/lib/fechas";
+import { numeroHotel } from "@/lib/whatsapp";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +69,7 @@ export default async function DetalleHabitacion({ params, searchParams }: Props)
                 habitacion={{ id: h.id, slug: h.slug, nombre: h.nombre, precioNoche: h.precioNoche, capacidad: h.capacidad }}
                 hoy={hoyEnColombia()}
                 inicial={inicial}
+                whatsappHotel={numeroHotel()}
               />
             </div>
           </div>

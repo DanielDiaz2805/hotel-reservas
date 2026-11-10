@@ -46,3 +46,14 @@ const formatoLargo = new Intl.DateTimeFormat("es-CO", {
 
 /** "2026-12-15" → "mar, 15 dic" */
 export const fechaLegible = (fecha: string) => formatoLargo.format(new Date(`${fecha}T00:00:00Z`));
+
+const formatoCompleto = new Intl.DateTimeFormat("es-CO", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+/** "2026-12-15" → "martes, 15 de diciembre de 2026" */
+export const fechaCompleta = (fecha: string) => formatoCompleto.format(new Date(`${fecha}T00:00:00Z`));

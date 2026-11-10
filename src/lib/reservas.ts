@@ -36,7 +36,7 @@ function generarCodigo(): string {
 }
 
 export type ResultadoReserva =
-  | { ok: true; reserva: { codigo: string; habitacion: string; llegada: string; salida: string; noches: number; total: number; huespedes: number; estado: string } }
+  | { ok: true; reserva: { codigo: string; habitacion: string; llegada: string; salida: string; noches: number; total: number; huespedes: number; estado: string; nombre: string } }
   | { ok: false; status: 404 | 409 | 422; mensaje: string };
 
 export async function crearReserva(datos: DatosReserva): Promise<ResultadoReserva> {
@@ -106,6 +106,38 @@ export async function crearReserva(datos: DatosReserva): Promise<ResultadoReserv
       total: reserva.total,
       huespedes: reserva.huespedes,
       estado: reserva.estado,
+      nombre: datos.nombre,
     },
+  };
+}
+
+export type ReservaPublica = {
+  codigo: string;
+  habitacion: string;
+  llegada: string;
+  salida: string;
+  noches: number;
+  total: number;
+  huespedes: number;
+  estado: string;
+  nombre: string;
+};
+
+/** Datos de una reserva para su página pública. No incluye el teléfono del huésped. */
+export async function obtenerReservaPorCodigo(codigo: string): Promise<ReservaPublica | null> {
+  if (!/^BS-[A-Z0-9]{6}$/.test(codigo)) return null;
+  await conectarDB();
+  const r = await Reserva.findOne({ codigo }).lean();
+  if (!r) return null;
+  return {
+    codigo: r.codigo,
+    habitacion: r.nombreHabitacion,
+    llegada: r.llegada,
+    salida: r.salida,
+    noches: r.noches,
+    total: r.total,
+    huespedes: r.huespedes,
+    estado: r.estado ?? "pendiente",
+    nombre: r.huesped?.nombre ?? "",
   };
 }
