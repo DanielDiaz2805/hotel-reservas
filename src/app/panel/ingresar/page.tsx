@@ -13,13 +13,18 @@ export default async function Ingresar({ searchParams }: Props) {
   const destino = siguiente?.startsWith("/panel") && !siguiente.startsWith("//") ? siguiente : "/panel";
   if (await obtenerSesion()) redirect(destino);
 
+  // Usuario de demostración: solo se muestra si ambas variables están definidas
+  const demoEmail = process.env.DEMO_EMAIL;
+  const demoPassword = process.env.DEMO_PASSWORD;
+  const demo = demoEmail && demoPassword ? { email: demoEmail, password: demoPassword } : null;
+
   return (
     <main className="flex min-h-screen items-center justify-center px-5">
       <div className="w-full max-w-sm">
         <p className="font-display text-sm font-semibold text-rio">Brisas del Sinú</p>
         <h1 className="mt-1 font-display text-3xl font-semibold">Panel del hotel</h1>
         <p className="mt-2 text-niebla">Ingresa para gestionar las reservas.</p>
-        <FormularioIngreso siguiente={destino} />
+        <FormularioIngreso siguiente={destino} demo={demo} />
       </div>
     </main>
   );
