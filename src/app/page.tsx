@@ -1,103 +1,81 @@
-import Image from "next/image";
+import { obtenerHabitaciones, type HabitacionPublica } from "@/lib/habitaciones";
+import { TarjetaHabitacion } from "@/components/TarjetaHabitacion";
 
-export default function Home() {
+// La página consulta la base de datos en cada visita, así siempre muestra
+// las habitaciones activas sin necesidad de volver a publicar el sitio.
+export const dynamic = "force-dynamic";
+
+export default async function Inicio() {
+  // Un componente de servidor puede leer la base de datos directamente:
+  // no necesita llamar a nuestra propia API con fetch.
+  let habitaciones: HabitacionPublica[] = [];
+  let error = false;
+  try {
+    habitaciones = await obtenerHabitaciones();
+  } catch (e) {
+    console.error("Error al cargar habitaciones:", e);
+    error = true;
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+    <main>
+      <section className="relative overflow-hidden bg-rio-oscuro pb-28 pt-36 text-white sm:pb-36 sm:pt-44">
+        <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
+          <p className="text-sm font-medium text-sol">Montería, Córdoba</p>
+          <h1 className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl">
+            Descansa a pocas cuadras del río Sinú
+          </h1>
+          <p className="mt-6 max-w-xl text-lg text-white/80">
+            Elige tu habitación, revisa la disponibilidad para tus fechas y confirma tu reserva por WhatsApp, sin
+            esperas ni llamadas.
+          </p>
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#habitaciones"
+            className="mt-10 inline-flex rounded-full bg-sol px-6 py-3 font-semibold text-rio-oscuro transition-colors hover:bg-white"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+            Ver habitaciones
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        {/* El río: una línea ondulada que cruza el encabezado */}
+        <svg
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-24 w-full sm:h-32"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          <path d="M0 70 C 240 20, 480 110, 720 64 S 1200 20, 1440 60 L1440 120 L0 120 Z" className="fill-papel" />
+          <path
+            d="M0 52 C 240 2, 480 92, 720 46 S 1200 2, 1440 42"
+            fill="none"
+            className="stroke-sol/70"
+            strokeWidth="2"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </svg>
+      </section>
+
+      <section id="habitaciones" className="mx-auto max-w-6xl scroll-mt-8 px-5 py-20 sm:px-8">
+        <h2 className="font-display text-3xl font-semibold sm:text-4xl">Nuestras habitaciones</h2>
+        <p className="mt-3 max-w-xl text-niebla">
+          Todas incluyen desayuno, aire acondicionado y Wi-Fi. Elige una para ver sus detalles.
+        </p>
+
+        {error ? (
+          <p role="alert" className="mt-10 rounded-xl border border-linea bg-white p-6">
+            No pudimos cargar las habitaciones en este momento. Recarga la página en unos segundos.
+          </p>
+        ) : habitaciones.length === 0 ? (
+          <p className="mt-10 rounded-xl border border-dashed border-linea p-6 text-niebla">
+            Aún no hay habitaciones publicadas. Ejecuta <code>npm run seed</code> para cargar las de ejemplo.
+          </p>
+        ) : (
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {habitaciones.map((h) => (
+              <TarjetaHabitacion key={h.id} habitacion={h} />
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
