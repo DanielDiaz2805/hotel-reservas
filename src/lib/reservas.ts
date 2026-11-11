@@ -39,7 +39,16 @@ export type ResultadoReserva =
   | { ok: true; reserva: { codigo: string; habitacion: string; llegada: string; salida: string; noches: number; total: number; huespedes: number; estado: string; nombre: string } }
   | { ok: false; status: 404 | 409 | 422; mensaje: string };
 
-export async function crearReserva(datos: DatosReserva): Promise<ResultadoReserva> {
+/** Opciones que solo usa el panel del hotel. La web pública llama a crearReserva sin ellas. */
+export type OpcionesCreacion = {
+  estado?: "pendiente" | "confirmada";
+  /** Quien crea la reserva desde el panel: queda en el historial */
+  autor?: string;
+  /** Precio por noche acordado; si no se indica, se usa el de la habitación */
+  precioNoche?: number;
+};
+
+export async function crearReserva(datos: DatosReserva, opciones: OpcionesCreacion = {}): Promise<ResultadoReserva> {
   await conectarDB();
   // Asegura que el índice único exista antes de la primera reserva
   await Ocupacion.init();
@@ -62,18 +71,24 @@ export async function crearReserva(datos: DatosReserva): Promise<ResultadoReserv
   // El precio se calcula aquí, con el valor de la base de datos.
   // Nunca se confía en un total enviado desde el navegador.
   const noches = contarNoches(datos.llegada, datos.salida);
+  const precioNoche = opciones.precioNoche ?? habitacion.precioNoche;
+  const estado = opciones.estado ?? "pendiente";
   const reserva = await Reserva.create({
     codigo: generarCodigo(),
     habitacion: habitacion._id,
     nombreHabitacion: habitacion.nombre,
-    precioNoche: habitacion.precioNoche,
+    precioNoche,
     llegada: datos.llegada,
     salida: datos.salida,
     noches,
-    total: habitacion.precioNoche * noches,
+    total: precioNoche * noches,
     huespedes: datos.huespedes,
     huesped: { nombre: datos.nombre, telefono: datos.telefono },
     notas: datos.notas,
+    estado,
+    historial: opciones.autor
+      ? [{ evento: estado === "confirmada" ? "Reserva creada y confirmada por el hotel" : "Reserva creada por el hotel", fecha: new Date(), autor: opciones.autor }]
+      : [],
   });
 
   // Bloquear cada noche. Si alguna ya está ocupada, el índice único lo rechaza

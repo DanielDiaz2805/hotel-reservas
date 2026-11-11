@@ -31,7 +31,9 @@ export default async function DetalleReserva({ params }: { params: Promise<{ id:
   const hoy = hoyEnColombia();
   const numero = normalizarNumero(r.telefono);
   const primerNombre = r.nombre.split(" ")[0];
-  const linea = [{ evento: "Solicitud recibida", fecha: r.creada, autor: "Huésped" }, ...r.historial];
+  // Las reservas creadas desde el panel ya traen su primer evento; las de la web empiezan con la solicitud
+  const creadaPorElHotel = r.historial[0]?.evento.startsWith("Reserva creada");
+  const linea = creadaPorElHotel ? r.historial : [{ evento: "Solicitud recibida", fecha: r.creada, autor: "Huésped" }, ...r.historial];
 
   const filas: [string, React.ReactNode][] = [
     ["Habitación", <Link key="h" href={`/panel/habitaciones/${r.habitacionId}`} className="underline-offset-4 hover:text-rio hover:underline">{r.habitacion}</Link>],
@@ -54,7 +56,7 @@ export default async function DetalleReserva({ params }: { params: Promise<{ id:
         <InsigniaEstado estado={r.estado} />
       </div>
       <p className="mt-1 text-niebla">
-        A nombre de {r.nombre}. Solicitada el {fechaHora(r.creada)}.
+        A nombre de {r.nombre}. {creadaPorElHotel ? "Creada" : "Solicitada"} el {fechaHora(r.creada)}.
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_1fr]">
@@ -101,6 +103,11 @@ export default async function DetalleReserva({ params }: { params: Promise<{ id:
         <div className="space-y-6">
           <Tarjeta titulo="Acciones">
             <AccionesReserva reserva={r} hoy={hoy} tamano="md" />
+            {(r.estado === "pendiente" || r.estado === "confirmada") && (
+              <Link href={`/panel/reservas/${r.id}/editar`} className={clasesBoton("secundario", "md", "mt-3 w-full")}>
+                Modificar fechas o habitación
+              </Link>
+            )}
             {r.estado === "confirmada" && r.llegada > hoy && (
               <p className="mt-3 text-sm text-niebla">El check-in se habilita el {fechaLegible(r.llegada)}, el día de la llegada.</p>
             )}

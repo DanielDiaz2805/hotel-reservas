@@ -98,7 +98,8 @@ export default async function Reservas({ searchParams }: Props) {
 
   return (
     <>
-      <div className="animate-subir">
+      <div className="flex flex-wrap items-start justify-between gap-4 animate-subir">
+       <div>
         <h1 className="font-display text-3xl font-semibold">Reservas</h1>
         <p className="mt-1 text-niebla">
           {total === 0
@@ -109,6 +110,10 @@ export default async function Reservas({ searchParams }: Props) {
               ? `${total} ${total === 1 ? "reserva" : "reservas"}`
               : `Mostrando ${primero} a ${ultimo} de ${total} reservas`}
         </p>
+       </div>
+       <Link href="/panel/reservas/nueva" className={clasesBoton("primario")}>
+         + Nueva reserva
+       </Link>
       </div>
 
       <div className="mt-6">
