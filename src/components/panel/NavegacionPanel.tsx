@@ -18,7 +18,7 @@ const SECCIONES: Seccion[] = [
   { texto: "Reservas", href: "/panel/reservas", icono: IconoReservas, lista: true },
   { texto: "Calendario", href: "/panel/calendario", icono: IconoCalendario, lista: true },
   { texto: "Habitaciones", href: "/panel/habitaciones", icono: IconoCama, lista: true },
-  { texto: "Configuración", href: "/panel/configuracion", icono: IconoAjustes, lista: false },
+  { texto: "Configuración", href: "/panel/configuracion", icono: IconoAjustes, lista: true },
 ];
 
 /**

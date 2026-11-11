@@ -6,7 +6,7 @@ import { personas } from "@/lib/formato";
 import { GaleriaHabitacion } from "@/components/GaleriaHabitacion";
 import { FormularioReserva } from "@/components/FormularioReserva";
 import { esFechaValida, hoyEnColombia } from "@/lib/fechas";
-import { numeroHotel } from "@/lib/whatsapp";
+import { obtenerConfiguracion } from "@/lib/configuracion";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +33,7 @@ export default async function DetalleHabitacion({ params, searchParams }: Props)
   };
   const h = await obtenerHabitacionPorSlug(slug);
   if (!h) notFound();
+  const hotel = await obtenerConfiguracion();
 
   return (
     <main>
@@ -69,7 +70,8 @@ export default async function DetalleHabitacion({ params, searchParams }: Props)
                 habitacion={{ id: h.id, slug: h.slug, nombre: h.nombre, precioNoche: h.precioNoche, capacidad: h.capacidad }}
                 hoy={hoyEnColombia()}
                 inicial={inicial}
-                whatsappHotel={numeroHotel()}
+                whatsappHotel={hotel.whatsapp}
+                hotel={{ nombre: hotel.nombre, checkIn: hotel.checkIn, checkOut: hotel.checkOut }}
               />
             </div>
           </div>

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { obtenerSesion } from "@/lib/auth";
+import { obtenerConfiguracion } from "@/lib/configuracion";
+import { iniciales } from "@/lib/configuracion-reglas";
 import { FormularioIngreso } from "@/components/panel/FormularioIngreso";
 
 export const metadata: Metadata = { title: "Ingresar al panel", robots: { index: false, follow: false } };
@@ -14,6 +16,7 @@ export default async function Ingresar({ searchParams }: Props) {
   const destino =
     siguiente?.startsWith("/panel") && !siguiente.startsWith("/panel/ingresar") ? siguiente : "/panel";
   if (await obtenerSesion()) redirect(destino);
+  const hotel = await obtenerConfiguracion();
 
   // Acceso de demostración para reclutadores: solo aparece si está configurado
   const demo =
@@ -32,8 +35,8 @@ export default async function Ingresar({ searchParams }: Props) {
           style={{ animationDelay: "-3s" }}
         />
         <Link href="/" className="relative flex items-center gap-2.5 font-display text-lg font-semibold animate-aparecer">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-sol text-sm text-rio-oscuro">BS</span>
-          Brisas del Sinú
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-sol text-sm text-rio-oscuro">{iniciales(hotel.nombreCorto)}</span>
+          {hotel.nombreCorto}
         </Link>
         <div className="relative">
           <h2 className="max-w-md font-display text-5xl font-semibold leading-[1.05] tracking-tight animate-subir">
@@ -65,7 +68,7 @@ export default async function Ingresar({ searchParams }: Props) {
       {/* Formulario */}
       <section className="flex items-center justify-center px-5 py-16">
         <div className="w-full max-w-sm animate-subir" style={{ animationDelay: "150ms" }}>
-          <p className="font-display text-sm font-semibold text-rio lg:hidden">Brisas del Sinú</p>
+          <p className="font-display text-sm font-semibold text-rio lg:hidden">{hotel.nombreCorto}</p>
           <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight">Panel del hotel</h1>
           <p className="mt-2 text-niebla">Ingresa para gestionar las reservas.</p>
           <FormularioIngreso siguiente={destino} demo={demo} />

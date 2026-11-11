@@ -5,6 +5,7 @@ import { obtenerReservaAdmin, telefonoLegible } from "@/lib/panel";
 import { fechaCompleta, fechaLegible, hoyEnColombia } from "@/lib/fechas";
 import { fechaHora, formatearPrecio } from "@/lib/formato";
 import { enlaceWhatsApp, normalizarNumero } from "@/lib/whatsapp";
+import { obtenerConfiguracion } from "@/lib/configuracion";
 import { IconoWhatsApp } from "@/components/IconoWhatsApp";
 import { AccionesReserva } from "@/components/panel/AccionesReserva";
 import { clasesBoton } from "@/components/panel/ui/Boton";
@@ -29,6 +30,7 @@ export default async function DetalleReserva({ params }: { params: Promise<{ id:
   if (!r) notFound();
 
   const hoy = hoyEnColombia();
+  const hotel = await obtenerConfiguracion();
   const numero = normalizarNumero(r.telefono);
   const primerNombre = r.nombre.split(" ")[0];
   // Las reservas creadas desde el panel ya traen su primer evento; las de la web empiezan con la solicitud
@@ -81,7 +83,7 @@ export default async function DetalleReserva({ params }: { params: Promise<{ id:
               </a>
               {numero && (
                 <a
-                  href={enlaceWhatsApp(numero, `Hola, ${primerNombre}. Te escribimos del Hotel Brisas del Sinú sobre tu reserva ${r.codigo}.`)}
+                  href={enlaceWhatsApp(numero, `Hola, ${primerNombre}. Te escribimos de ${hotel.nombre} sobre tu reserva ${r.codigo}.`)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={clasesBoton("whatsapp", "sm")}

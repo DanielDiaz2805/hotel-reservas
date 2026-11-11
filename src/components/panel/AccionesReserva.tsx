@@ -6,6 +6,7 @@ import { fechaLegible } from "@/lib/fechas";
 import { enlaceWhatsApp, mensajeCancelacion, mensajeConfirmacion, normalizarNumero } from "@/lib/whatsapp";
 import { IconoWhatsApp } from "@/components/IconoWhatsApp";
 import { Boton } from "@/components/panel/ui/Boton";
+import { useHotel } from "@/components/panel/ui/ContextoHotel";
 import { useAvisos, useConfirmar } from "@/components/panel/ui/Proveedor";
 
 type Accion = "confirmada" | "en_casa" | "finalizada" | "cancelada";
@@ -27,6 +28,7 @@ export function AccionesReserva({ reserva, hoy, compacto = false, tamano = "sm" 
   const router = useRouter();
   const avisos = useAvisos();
   const confirmar = useConfirmar();
+  const hotel = useHotel();
   // Guarda cuál acción está en curso para mostrar la carga solo en ese botón
   const [accion, setAccion] = useState<Accion | null>(null);
 
@@ -86,8 +88,8 @@ export function AccionesReserva({ reserva, hoy, compacto = false, tamano = "sm" 
     if (!numero) return;
     const mensaje =
       reserva.estado === "cancelada"
-        ? mensajeCancelacion(reserva)
-        : mensajeConfirmacion(reserva, `${window.location.origin}/reservas/${reserva.codigo}`);
+        ? mensajeCancelacion(reserva, hotel)
+        : mensajeConfirmacion(reserva, `${window.location.origin}/reservas/${reserva.codigo}`, hotel);
     window.open(enlaceWhatsApp(numero, mensaje), "_blank", "noopener,noreferrer");
   };
 

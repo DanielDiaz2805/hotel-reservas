@@ -2,21 +2,27 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Bricolage_Grotesque, Figtree } from "next/font/google";
 import "./globals.css";
-import { numeroHotel } from "@/lib/whatsapp";
+import { obtenerConfiguracion } from "@/lib/configuracion";
 import { BotonWhatsApp } from "@/components/BotonWhatsApp";
 import { SoloSitioPublico } from "@/components/SoloSitioPublico";
 
 const bricolage = Bricolage_Grotesque({ variable: "--font-bricolage", subsets: ["latin"] });
 const figtree = Figtree({ variable: "--font-figtree", subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: { default: "Hotel Brisas del Sinú | Montería", template: "%s | Hotel Brisas del Sinú" },
-  description:
-    "Reserva tu habitación en el Hotel Brisas del Sinú, en Montería. Consulta disponibilidad y confirma tu reserva por WhatsApp.",
-};
+// Los datos del hotel salen de la base de datos: la página no se congela al compilar
+export const dynamic = "force-dynamic";
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const whatsapp = numeroHotel();
+export async function generateMetadata(): Promise<Metadata> {
+  const hotel = await obtenerConfiguracion();
+  return {
+    title: { default: `${hotel.nombre} | ${hotel.ciudad.split(",")[0]}`, template: `%s | ${hotel.nombre}` },
+    description: `Reserva tu habitación en ${hotel.nombre}, en ${hotel.ciudad}. Consulta disponibilidad y confirma tu reserva por WhatsApp.`,
+  };
+}
+
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const hotel = await obtenerConfiguracion();
+  const whatsapp = hotel.whatsapp;
   return (
     <html lang="es" data-scroll-behavior="smooth">
       <body className={`${bricolage.variable} ${figtree.variable} antialiased`}>
@@ -25,7 +31,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <header className="absolute inset-x-0 top-0 z-10">
             <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
               <Link href="/" className="font-display text-lg font-semibold text-white">
-                Brisas del Sinú
+                {hotel.nombreCorto}
               </Link>
               <Link
                 href="/#habitaciones"
@@ -40,13 +46,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
 
         <SoloSitioPublico>
-          {whatsapp && <BotonWhatsApp numero={whatsapp} />}
+          {whatsapp && <BotonWhatsApp numero={whatsapp} hotel={hotel.nombre} />}
           <footer className="border-t border-linea">
             <div className="mx-auto flex max-w-6xl flex-col gap-2 px-5 py-10 text-sm text-niebla sm:flex-row sm:justify-between sm:px-8">
               <p>
-                <span className="font-display font-semibold text-tinta">Hotel Brisas del Sinú</span>, Montería, Córdoba
+                <span className="font-display font-semibold text-tinta">{hotel.nombre}</span>, {hotel.ciudad}
               </p>
-              <p>Proyecto de demostración con datos ficticios.</p>
+              {hotel.notaPie && <p>{hotel.notaPie}</p>}
             </div>
           </footer>
         </SoloSitioPublico>

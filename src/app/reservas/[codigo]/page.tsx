@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { obtenerReservaPorCodigo } from "@/lib/reservas";
 import { fechaCompleta } from "@/lib/fechas";
 import { formatearPrecio } from "@/lib/formato";
-import { enlaceWhatsApp, numeroHotel } from "@/lib/whatsapp";
+import { enlaceWhatsApp } from "@/lib/whatsapp";
+import { obtenerConfiguracion } from "@/lib/configuracion";
 import { IconoWhatsApp } from "@/components/IconoWhatsApp";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +46,8 @@ export default async function EstadoReserva({ params }: { params: Promise<{ codi
   if (!r) notFound();
 
   const estado = estados[r.estado] ?? estados.pendiente;
-  const whatsapp = numeroHotel();
+  const hotel = await obtenerConfiguracion();
+  const whatsapp = hotel.whatsapp;
 
   return (
     <main>
@@ -73,7 +75,7 @@ export default async function EstadoReserva({ params }: { params: Promise<{ codi
 
         {whatsapp && (
           <a
-            href={enlaceWhatsApp(whatsapp, `Hola, Hotel Brisas del Sinú. Quiero consultar mi reserva ${r.codigo}.`)}
+            href={enlaceWhatsApp(whatsapp, `Hola, ${hotel.nombre}. Quiero consultar mi reserva ${r.codigo}.`)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-8 flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-3 font-semibold text-[#0b3d22] hover:bg-[#1ebe5a]"

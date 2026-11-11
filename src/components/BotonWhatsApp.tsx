@@ -2,8 +2,8 @@ import { enlaceWhatsApp } from "@/lib/whatsapp";
 import { IconoWhatsApp } from "./IconoWhatsApp";
 
 /** Botón flotante para escribirle al hotel desde cualquier página. */
-export function BotonWhatsApp({ numero }: { numero: string }) {
-  const href = enlaceWhatsApp(numero, "Hola, Hotel Brisas del Sinú. Quisiera información sobre sus habitaciones.");
+export function BotonWhatsApp({ numero, hotel }: { numero: string; hotel: string }) {
+  const href = enlaceWhatsApp(numero, `Hola, ${hotel}. Quisiera información sobre sus habitaciones.`);
   return (
     <a
       href={href}

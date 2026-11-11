@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { contarNoches, fechaLegible, sumarDias } from "@/lib/fechas";
 import { formatearPrecio } from "@/lib/formato";
 import { enlaceWhatsApp, mensajeNuevaReserva } from "@/lib/whatsapp";
+import type { DatosHotel } from "@/lib/configuracion-reglas";
 import { IconoWhatsApp } from "./IconoWhatsApp";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
   hoy: string;
   inicial: { llegada?: string; salida?: string; huespedes?: number };
   whatsappHotel: string | null;
+  hotel: DatosHotel;
 };
 
 type Confirmacion = {
@@ -26,7 +28,7 @@ type Confirmacion = {
 
 type Disponibilidad = "desconocida" | "consultando" | "disponible" | "ocupada";
 
-export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: Props) {
+export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel, hotel }: Props) {
   const [llegada, setLlegada] = useState(inicial.llegada ?? "");
   const [salida, setSalida] = useState(inicial.salida ?? "");
   const [huespedes, setHuespedes] = useState(Math.min(inicial.huespedes ?? 1, habitacion.capacidad));
@@ -147,7 +149,7 @@ export function FormularioReserva({ habitacion, hoy, inicial, whatsappHotel }: P
           <a
             href={enlaceWhatsApp(
               whatsappHotel,
-              mensajeNuevaReserva(confirmacion, `${window.location.origin}/reservas/${confirmacion.codigo}`)
+              mensajeNuevaReserva(confirmacion, `${window.location.origin}/reservas/${confirmacion.codigo}`, hotel)
             )}
             target="_blank"
             rel="noopener noreferrer"

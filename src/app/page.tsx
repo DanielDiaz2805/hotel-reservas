@@ -6,6 +6,7 @@ import { hoyEnColombia, fechaLegible } from "@/lib/fechas";
 import { TarjetaHabitacion } from "@/components/TarjetaHabitacion";
 import { BuscadorFechas } from "@/components/BuscadorFechas";
 import { Revelar } from "@/components/Revelar";
+import { obtenerConfiguracion } from "@/lib/configuracion";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +15,7 @@ type Props = { searchParams: Promise<Record<string, string | string[] | undefine
 export default async function Inicio({ searchParams }: Props) {
   const parametros = await searchParams;
   const hoy = hoyEnColombia();
+  const hotel = await obtenerConfiguracion();
   const buscando = Boolean(parametros.llegada || parametros.salida);
   const busqueda = buscando ? busquedaSchema.safeParse(parametros) : null;
   const erroresBusqueda = busqueda && !busqueda.success ? Object.values(erroresPorCampo(busqueda.error)) : [];
@@ -101,16 +103,15 @@ export default async function Inicio({ searchParams }: Props) {
           style={{ animationDelay: "-3s" }}
         />
         <div className="relative mx-auto max-w-6xl px-5 sm:px-8">
-          <p className="text-sm font-medium text-sol animate-subir">Montería, Córdoba</p>
+          <p className="text-sm font-medium text-sol animate-subir">{hotel.ciudad}</p>
           <h1
             className="mt-4 max-w-3xl font-display text-5xl font-semibold leading-[1.02] tracking-tight animate-subir sm:text-7xl"
             style={{ animationDelay: "100ms" }}
           >
-            Descansa a pocas cuadras del río Sinú
+            {hotel.tituloPrincipal}
           </h1>
           <p className="mt-6 max-w-xl text-lg text-white/80 animate-subir" style={{ animationDelay: "200ms" }}>
-            Elige tus fechas, mira qué habitaciones están libres y confirma tu reserva por WhatsApp, sin esperas ni
-            llamadas.
+            {hotel.descripcionPrincipal}
           </p>
           <div className="animate-subir" style={{ animationDelay: "320ms" }}>
             <BuscadorFechas key={`${inicial.llegada}-${inicial.salida}`} hoy={hoy} inicial={inicial} />
