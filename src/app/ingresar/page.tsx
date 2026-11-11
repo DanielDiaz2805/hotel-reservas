@@ -11,7 +11,8 @@ type Props = { searchParams: Promise<{ siguiente?: string }> };
 export default async function Ingresar({ searchParams }: Props) {
   const { siguiente } = await searchParams;
   // Solo se permite volver a rutas del panel: evita redirecciones a sitios externos
-  const destino = siguiente?.startsWith("/panel") && !siguiente.startsWith("//") ? siguiente : "/panel";
+  const destino =
+    siguiente?.startsWith("/panel") && !siguiente.startsWith("/panel/ingresar") ? siguiente : "/panel";
   if (await obtenerSesion()) redirect(destino);
 
   // Acceso de demostración para reclutadores: solo aparece si está configurado

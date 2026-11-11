@@ -7,6 +7,12 @@ import { COOKIE_SESION, verificarSesion } from "@/lib/sesion";
  */
 export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
+
+  // Dirección antigua del inicio de sesión: se redirige a la nueva
+  if (pathname === "/panel/ingresar") {
+    return NextResponse.redirect(new URL("/ingresar", request.url));
+  }
+
   const sesion = await verificarSesion(request.cookies.get(COOKIE_SESION)?.value);
   if (sesion) return NextResponse.next();
 
