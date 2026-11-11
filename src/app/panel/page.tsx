@@ -13,8 +13,10 @@ import { fechaCompleta, fechaLegible, hoyEnColombia, ZONA_HOTEL } from "@/lib/fe
 import { formatearPrecio } from "@/lib/formato";
 import { AccionesReserva } from "@/components/panel/AccionesReserva";
 import { AnilloOcupacion } from "@/components/panel/AnilloOcupacion";
-import { IconoLlegada, IconoReloj, IconoSalida } from "@/components/panel/Iconos";
+import { IconoLlegada, IconoSalida } from "@/components/panel/Iconos";
 import { Contador } from "@/components/Contador";
+import { EstadoVacio } from "@/components/panel/ui/EstadoVacio";
+import { IconoCheck, IconoReloj } from "@/components/panel/Iconos";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,24 @@ const estilosEstado: Record<EstadoReserva, { insignia: string; punto: string }> 
   pendiente: { insignia: "bg-sol/20 text-[#7a5300]", punto: "bg-sol animate-pulse" },
   confirmada: { insignia: "bg-rio/12 text-rio-oscuro", punto: "bg-rio" },
   cancelada: { insignia: "bg-red-100 text-red-800", punto: "bg-red-500" },
+};
+
+const vacios: Record<EstadoReserva, { titulo: string; descripcion: string; icono: React.ReactNode }> = {
+  pendiente: {
+    titulo: "No tienes reservas por confirmar",
+    descripcion: "Cuando un huésped envíe una solicitud desde la web, aparecerá aquí para que la confirmes.",
+    icono: <IconoReloj />,
+  },
+  confirmada: {
+    titulo: "Todavía no hay reservas confirmadas",
+    descripcion: "Las reservas que confirmes quedarán aquí, listas para avisarle al huésped por WhatsApp.",
+    icono: <IconoCheck />,
+  },
+  cancelada: {
+    titulo: "No hay reservas canceladas",
+    descripcion: "Las reservas que canceles se guardan aquí como historial.",
+    icono: <IconoCheck />,
+  },
 };
 
 function saludo() {
@@ -149,11 +169,8 @@ export default async function Panel({ searchParams }: Props) {
       </div>
 
       {reservas.length === 0 ? (
-        <div className="mt-6 rounded-3xl border border-dashed border-linea bg-white/50 p-12 text-center animate-aparecer">
-          <p className="font-display text-lg font-semibold">Nada por aquí</p>
-          <p className="mt-1 text-niebla">
-            No hay reservas {pestanas.find((p) => p.estado === estado)?.texto.toLowerCase()}.
-          </p>
+        <div className="mt-6">
+          <EstadoVacio titulo={vacios[estado].titulo} descripcion={vacios[estado].descripcion} icono={vacios[estado].icono} />
         </div>
       ) : (
         <div className="mt-6 overflow-x-auto rounded-3xl border border-linea bg-white shadow-[0_10px_40px_-30px_rgba(13,58,49,0.5)]">
