@@ -15,6 +15,11 @@ const tamanos: Record<Tamano, string> = {
   md: "px-5 py-2.5 text-sm",
 };
 
+/** Clases de un botón, para usarlas también en enlaces: <Link className={clasesBoton("primario")}> */
+export function clasesBoton(variante: Variante = "primario", tamano: Tamano = "md", extra = ""): string {
+  return `relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 ${variantes[variante]} ${tamanos[tamano]} ${extra}`;
+}
+
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   variante?: Variante;
   tamano?: Tamano;
@@ -38,7 +43,7 @@ export function Boton({
       type={type}
       disabled={disabled || cargando}
       aria-busy={cargando || undefined}
-      className={`relative inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-full font-semibold transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 ${variantes[variante]} ${tamanos[tamano]} ${className}`}
+      className={clasesBoton(variante, tamano, className)}
       {...resto}
     >
       <span className={`inline-flex items-center gap-1.5 ${cargando ? "invisible" : ""}`}>{children}</span>

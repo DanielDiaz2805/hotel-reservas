@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { obtenerHabitacionPorSlug } from "@/lib/habitaciones";
 import { personas } from "@/lib/formato";
-import { VisualHabitacion } from "@/components/VisualHabitacion";
+import { GaleriaHabitacion } from "@/components/GaleriaHabitacion";
 import { FormularioReserva } from "@/components/FormularioReserva";
 import { esFechaValida, hoyEnColombia } from "@/lib/fechas";
 import { numeroHotel } from "@/lib/whatsapp";
@@ -43,8 +43,8 @@ export default async function DetalleHabitacion({ params, searchParams }: Props)
         </Link>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[1.3fr_1fr]">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-linea animate-subir lg:sticky lg:top-8">
-            <VisualHabitacion nombre={h.nombre} tipo={h.tipo} capacidad={h.capacidad} imagen={h.imagenes[0]} prioridad />
+          <div className="animate-subir lg:sticky lg:top-8 lg:self-start">
+            <GaleriaHabitacion imagenes={h.imagenes} nombre={h.nombre} tipo={h.tipo} capacidad={h.capacidad} />
           </div>
 
           <div className="animate-subir" style={{ animationDelay: "120ms" }}>

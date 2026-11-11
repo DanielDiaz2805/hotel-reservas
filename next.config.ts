@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // Las fotos de las habitaciones se alojan en Cloudinary
+    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+  },
 };
 
 export default nextConfig;

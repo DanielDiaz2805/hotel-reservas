@@ -15,7 +15,7 @@ type Seccion = {
 // A medida que se construye cada sección, se cambia `lista` a true
 const SECCIONES: Seccion[] = [
   { texto: "Inicio", href: "/panel", icono: IconoInicio, lista: true },
-  { texto: "Habitaciones", href: "/panel/habitaciones", icono: IconoCama, lista: false },
+  { texto: "Habitaciones", href: "/panel/habitaciones", icono: IconoCama, lista: true },
   { texto: "Configuración", href: "/panel/configuracion", icono: IconoAjustes, lista: false },
 ];
 
