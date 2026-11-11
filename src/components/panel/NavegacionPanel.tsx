@@ -2,7 +2,7 @@
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconoAjustes, IconoCama, IconoInicio, IconoReservas } from "@/components/panel/Iconos";
+import { IconoAjustes, IconoCalendario, IconoCama, IconoInicio, IconoReservas } from "@/components/panel/Iconos";
 
 type Seccion = {
   texto: string;
@@ -16,6 +16,7 @@ type Seccion = {
 const SECCIONES: Seccion[] = [
   { texto: "Inicio", href: "/panel", icono: IconoInicio, lista: true },
   { texto: "Reservas", href: "/panel/reservas", icono: IconoReservas, lista: true },
+  { texto: "Calendario", href: "/panel/calendario", icono: IconoCalendario, lista: true },
   { texto: "Habitaciones", href: "/panel/habitaciones", icono: IconoCama, lista: true },
   { texto: "Configuración", href: "/panel/configuracion", icono: IconoAjustes, lista: false },
 ];

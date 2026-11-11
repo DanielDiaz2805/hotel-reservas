@@ -49,7 +49,7 @@ export async function habitacionesParaReserva(
       capacidad: h.capacidad,
       precioNoche: h.precioNoche,
     };
-    if (ocupadasIds.has(base.id)) return { ...base, libre: false, motivo: "Ocupada en esas fechas" };
+    if (ocupadasIds.has(base.id)) return { ...base, libre: false, motivo: "Ocupada o bloqueada en esas fechas" };
     if (h.capacidad < huespedes) {
       return { ...base, libre: false, motivo: `Admite máximo ${h.capacidad} ${h.capacidad === 1 ? "persona" : "personas"}` };
     }

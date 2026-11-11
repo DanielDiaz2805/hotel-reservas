@@ -12,11 +12,14 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
 const ocupacionSchema = new Schema({
   habitacion: { type: Schema.Types.ObjectId, ref: "Habitacion", required: true },
   fecha: { type: String, required: true }, // AAAA-MM-DD
-  reserva: { type: Schema.Types.ObjectId, ref: "Reserva", required: true },
+  // Cada noche pertenece a una reserva o a un bloqueo de fechas, nunca a ambos
+  reserva: { type: Schema.Types.ObjectId, ref: "Reserva" },
+  bloqueo: { type: Schema.Types.ObjectId, ref: "Bloqueo" },
 });
 
 ocupacionSchema.index({ habitacion: 1, fecha: 1 }, { unique: true });
 ocupacionSchema.index({ reserva: 1 });
+ocupacionSchema.index({ bloqueo: 1 });
 
 export type OcupacionDoc = InferSchemaType<typeof ocupacionSchema>;
 

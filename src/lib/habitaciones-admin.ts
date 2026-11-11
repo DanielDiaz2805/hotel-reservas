@@ -2,6 +2,8 @@ import { Types } from "mongoose";
 import { conectarDB } from "./db";
 import type { CambioHabitacion, DatosHabitacion, TipoHabitacion } from "./habitacion-reglas";
 import { Habitacion } from "@/models/Habitacion";
+import { Bloqueo } from "@/models/Bloqueo";
+import { Ocupacion } from "@/models/Ocupacion";
 import { Reserva } from "@/models/Reserva";
 
 export type HabitacionAdmin = {
@@ -131,6 +133,8 @@ export async function eliminarHabitacion(id: string): Promise<ResultadoEliminar>
       mensaje: "Esta habitación ya tiene reservas en su historial, así que no se puede borrar. Ocúltala de la web en su lugar.",
     };
   }
+  // Sin reservas, lo único que puede quedar son bloqueos de fechas: se van con la habitación
+  await Promise.all([Ocupacion.deleteMany({ habitacion: id }), Bloqueo.deleteMany({ habitacion: id })]);
   const borrada = await Habitacion.findByIdAndDelete(id);
   if (!borrada) return { ok: false, status: 404, mensaje: "La habitación no existe" };
   return { ok: true };

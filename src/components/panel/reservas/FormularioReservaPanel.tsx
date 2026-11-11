@@ -15,6 +15,10 @@ type Props = {
   hoy: string;
   /** Mañana, como salida sugerida en una reserva nueva */
   manana: string;
+  /** Valores con los que arranca una reserva nueva (por ejemplo, al tocar un día libre del calendario) */
+  llegadaInicial?: string;
+  salidaInicial?: string;
+  habitacionInicial?: string;
 };
 
 const entrada =
@@ -48,15 +52,15 @@ function Campo({ id, etiqueta, error, ayuda, children }: { id: string; etiqueta:
   );
 }
 
-export function FormularioReservaPanel({ reserva, hoy, manana }: Props) {
+export function FormularioReservaPanel({ reserva, hoy, manana, llegadaInicial, salidaInicial, habitacionInicial }: Props) {
   const router = useRouter();
   const avisos = useAvisos();
   const edicion = Boolean(reserva);
 
-  const [llegada, setLlegada] = useState(reserva?.llegada ?? hoy);
-  const [salida, setSalida] = useState(reserva?.salida ?? manana);
+  const [llegada, setLlegada] = useState(reserva?.llegada ?? llegadaInicial ?? hoy);
+  const [salida, setSalida] = useState(reserva?.salida ?? salidaInicial ?? manana);
   const [huespedes, setHuespedes] = useState(reserva?.huespedes ?? 2);
-  const [habitacionId, setHabitacionId] = useState(reserva?.habitacionId ?? "");
+  const [habitacionId, setHabitacionId] = useState(reserva?.habitacionId ?? habitacionInicial ?? "");
   const [nombre, setNombre] = useState(reserva?.nombre ?? "");
   const [telefono, setTelefono] = useState(reserva?.telefono ?? "");
   const [notas, setNotas] = useState(reserva?.notas ?? "");

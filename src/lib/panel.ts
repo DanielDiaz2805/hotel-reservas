@@ -277,7 +277,8 @@ export type ResumenDia = {
 export async function resumenDelDia(hoy: string): Promise<ResumenDia> {
   await conectarDB();
   const [ocupadas, totalHabitaciones, llegadas, salidas, pendientes, totalPendientes] = await Promise.all([
-    Ocupacion.distinct("habitacion", { fecha: hoy }),
+    // Solo cuentan las habitaciones con huésped; un bloqueo de fechas no es ocupación
+    Ocupacion.distinct("habitacion", { fecha: hoy, reserva: { $exists: true } }),
     Habitacion.countDocuments({ activa: true }),
     Reserva.find({ estado: { $in: ["pendiente", "confirmada", "en_casa"] }, llegada: hoy }).sort({ createdAt: 1 }).lean<ReservaLean[]>(),
     Reserva.find({ estado: { $in: ["confirmada", "en_casa", "finalizada"] }, salida: hoy }).sort({ createdAt: 1 }).lean<ReservaLean[]>(),

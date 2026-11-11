@@ -82,3 +82,11 @@ export function erroresPorCampo(error: z.ZodError): Record<string, string> {
   }
   return resultado;
 }
+
+/** Bloqueo de fechas de una habitación. `ultimoDia` es el último día bloqueado (inclusive). */
+export const bloqueoSchema = z.object({
+  habitacion: z.string().min(1, "Elige una habitación"),
+  desde: fecha,
+  ultimoDia: fecha,
+  motivo: z.string().trim().max(80, "Máximo 80 caracteres").optional().default(""),
+});
