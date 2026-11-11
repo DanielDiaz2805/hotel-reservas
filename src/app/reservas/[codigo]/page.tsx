@@ -22,6 +22,16 @@ const estados: Record<string, { texto: string; detalle: string; estilo: string }
     detalle: "Tu habitación está reservada. ¡Te esperamos!",
     estilo: "bg-rio/15 text-rio-oscuro",
   },
+  en_casa: {
+    texto: "En casa",
+    detalle: "Ya hiciste tu check-in. ¡Que disfrutes tu estadía!",
+    estilo: "bg-sky-100 text-sky-800",
+  },
+  finalizada: {
+    texto: "Finalizada",
+    detalle: "Gracias por tu visita. ¡Esperamos verte pronto!",
+    estilo: "bg-papel text-niebla",
+  },
   cancelada: {
     texto: "Cancelada",
     detalle: "Esta reserva fue cancelada. Escríbenos si quieres buscar otras fechas.",

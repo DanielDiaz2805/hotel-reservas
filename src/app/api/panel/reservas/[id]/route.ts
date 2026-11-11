@@ -5,21 +5,22 @@ import { cambiarEstado } from "@/lib/panel";
 
 export const dynamic = "force-dynamic";
 
-const cambioSchema = z.object({ estado: z.enum(["confirmada", "cancelada"]) });
+const cambioSchema = z.object({ estado: z.enum(["confirmada", "en_casa", "finalizada", "cancelada"]) });
 
-// PATCH /api/panel/reservas/:id  { "estado": "confirmada" | "cancelada" }
+// PATCH /api/panel/reservas/:id  { "estado": "confirmada" | "en_casa" | "finalizada" | "cancelada" }
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  if (!(await obtenerSesion())) {
+  const sesion = await obtenerSesion();
+  if (!sesion) {
     return NextResponse.json({ mensaje: "Debes iniciar sesión" }, { status: 401 });
   }
   const { id } = await params;
   const validacion = cambioSchema.safeParse(await request.json().catch(() => null));
   if (!validacion.success) {
-    return NextResponse.json({ mensaje: 'El estado debe ser "confirmada" o "cancelada"' }, { status: 400 });
+    return NextResponse.json({ mensaje: "El estado no es válido" }, { status: 400 });
   }
 
   try {
-    const resultado = await cambiarEstado(id, validacion.data.estado);
+    const resultado = await cambiarEstado(id, validacion.data.estado, sesion.nombre);
     if (!resultado.ok) return NextResponse.json({ mensaje: resultado.mensaje }, { status: resultado.status });
     return NextResponse.json(resultado.reserva);
   } catch (error) {

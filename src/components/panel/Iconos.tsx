@@ -38,3 +38,9 @@ export const IconoInfo = ({ className = "h-5 w-5" }: P) => (
 export const IconoCerrar = ({ className = "h-5 w-5" }: P) => (
   <svg {...base} className={className}><path d="M6 6l12 12M18 6 6 18" /></svg>
 );
+export const IconoReservas = ({ className = "h-5 w-5" }: P) => (
+  <svg {...base} className={className}><rect x="3.5" y="5" width="17" height="15" rx="2.5" /><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4" /></svg>
+);
+export const IconoBuscar = ({ className = "h-5 w-5" }: P) => (
+  <svg {...base} className={className}><circle cx="11" cy="11" r="6.5" /><path d="m20 20-4-4" /></svg>
+);

@@ -1,6 +1,7 @@
 import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import { ESTADOS } from "@/lib/reservas-estados";
 
-export const ESTADOS_RESERVA = ["pendiente", "confirmada", "cancelada"] as const;
+export const ESTADOS_RESERVA = ESTADOS;
 
 const reservaSchema = new Schema(
   {
@@ -22,11 +23,31 @@ const reservaSchema = new Schema(
     },
     notas: { type: String, default: "" },
     estado: { type: String, enum: ESTADOS_RESERVA, default: "pendiente" },
+    // Notas del personal del hotel: el huésped nunca las ve
+    notasInternas: [
+      new Schema({
+        texto: { type: String, required: true, maxlength: 500 },
+        fecha: { type: Date, default: Date.now },
+        autor: { type: String, default: "" },
+      }),
+    ],
+    // Cada cambio de estado queda registrado: qué pasó, cuándo y quién lo hizo
+    historial: [
+      new Schema(
+        {
+          evento: { type: String, required: true },
+          fecha: { type: Date, default: Date.now },
+          autor: { type: String, default: "" },
+        },
+        { _id: false }
+      ),
+    ],
   },
   { timestamps: true }
 );
 
 reservaSchema.index({ llegada: 1 });
+reservaSchema.index({ estado: 1, llegada: 1 });
 
 export type ReservaDoc = InferSchemaType<typeof reservaSchema>;
 

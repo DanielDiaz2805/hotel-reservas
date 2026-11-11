@@ -16,7 +16,7 @@ export type HabitacionAdmin = {
   comodidades: string[];
   imagenes: string[];
   activa: boolean;
-  /** Reservas pendientes o confirmadas cuya salida es hoy o después */
+  /** Reservas pendientes, confirmadas o en casa cuya salida es hoy o después */
   reservasVigentes: number;
 };
 
@@ -53,7 +53,7 @@ function aAdmin(d: Documento, reservasVigentes: number): HabitacionAdmin {
 
 async function reservasVigentesPorHabitacion(hoy: string): Promise<Map<string, number>> {
   const grupos = await Reserva.aggregate<{ _id: Types.ObjectId; total: number }>([
-    { $match: { estado: { $ne: "cancelada" }, salida: { $gte: hoy } } },
+    { $match: { estado: { $in: ["pendiente", "confirmada", "en_casa"] }, salida: { $gte: hoy } } },
     { $group: { _id: "$habitacion", total: { $sum: 1 } } },
   ]);
   return new Map(grupos.map((g) => [g._id.toString(), g.total]));
