@@ -161,3 +161,20 @@ body {
     transform: none;
   }
 }
+
+/* iPhone/Safari: los campos de fecha traen un ancho propio y se salían de su
+   contenedor. Se fuerzan al ancho disponible y se alinea el texto a la izquierda. */
+input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  min-height: 1.5em;
+}
